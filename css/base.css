@@ -1,0 +1,50 @@
+/* Contains styles related to the list views of events, artists and distributors */
+
+a {
+    color: #66b3ff;
+}
+/*
+.listing-box {
+    margin-bottom: 3px;
+    padding: 1px;
+    padding-left: 15px;
+    padding-bottom: 20px;
+    background-color: #f5f5f5;
+}*/
+
+.listing-box {
+    margin-bottom: 3px;
+    padding: 1px;
+    padding-left: 10px;
+    padding-right: 5px;
+    padding-bottom: 20px;
+    background-color: rgba(245,245,245,0.7);
+
+}
+
+.listing-box:hover {
+    background-color: rgba(255,255,255,1);
+    cursor: pointer;
+}
+
+#listing-panel {
+    max-height: 720px;
+    overflow-y: auto;
+    margin-right: -20px;
+}
+.navbar-brand,
+.navbar-nav li a {
+    line-height: 60px;
+    height: 60px;
+    padding-top: 0;
+}
+
+.custom-brand {
+    width: 120px;
+}
+
+.soft-shadow {
+    -webkit-box-shadow: 5px 5px 8px -2px rgba(0,0,0,0.6);
+    -moz-box-shadow: 5px 5px 8px -2px rgba(0,0,0,0.6);
+    box-shadow: 5px 5px 8px -2px rgba(0,0,0,0.6);
+}
