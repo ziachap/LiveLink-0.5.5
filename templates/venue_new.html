@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}| New Venue{% endblock %}
+
+{% block head %}
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCJ_kAww6tmQVER8PQtFicAZ7JdjekbnU">
+    </script>
+    <style type="text/css">
+      #mapCanvas { width: 100%; min-height: 400px; height: 100%; margin: 0; padding: 0;}
+    </style>
+    <script src="{% static 'gmapsjs/gmaps.js' %}"></script>
+    <!-- My google maps picker script -->
+    <script src="{% static 'js/map_picker.js' %}"></script>
+{% endblock %}
+
+<!--Body -->
+{% block content %}
+<div class="container">
+    <br />
+    <form id="venue_new_form" method="post" action="/newvenue/" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+        <!-- New Venue -->
+        <div class="col-md-6">
+            {{ form.non_field_errors }}
+            {{ form.name.errors }}
+            <label for="{{ form.name.id_for_label }}">Name:</label>
+            <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon"><i class="fa fa-building fa-fw"></i></span>
+            <input class="form-control" type="text" name="{{ form.name.name }}" placeholder="Name" value="{{ form.name.value|default_if_none:"" }}">
+            </div><br />
+            {{ form.summary.errors }}
+            <label for="{{ form.summary.id_for_label }}">Description:</label>
+            <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon"><i class="fa fa-align-left fa-fw"></i></span>
+            <textarea class="form-control" type="textarea" rows="10" name="{{ form.summary.name }}" placeholder="Description">{{ form.summary.value|default_if_none:"" }}</textarea>
+            </div><br />
+            {{ form.website.errors }}
+            <label for="{{ form.website.id_for_label }}">Website:</label>
+            <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon"><i class="fa fa-globe fa-fw"></i></span>
+            <input class="form-control" type="text" name="{{ form.website.name }}" placeholder="Website" value="{{ form.website.value|default_if_none:"" }}">
+            </div><br />
+            {{ form.email.errors }}
+            <label for="{{ form.email.id_for_label }}">Email:</label>
+            <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon"><i class="fa fa-at fa-fw"></i></span>
+            <input class="form-control" type="text" name="{{ form.email.name }}" placeholder="Email" value="{{ form.email.value|default_if_none:"" }}">
+            </div><br />
+            {{ form.logo.errors }}
+            <label for="{{ form.logo.id_for_label }}">Venue Logo:</label>
+            <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon"><i class="fa fa-file-image-o fa-fw"></i></span>
+            <input class="form-control " type="file" name="{{ form.logo.name }}" value="{{ form.logo.value|default_if_none:"" }}">
+            </div><br />
+            {{ form.cover.errors }}
+            <label for="{{ form.cover.id_for_label }}">Venue Cover Photo:</label>
+            <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon"><i class="fa fa-file-image-o fa-fw"></i></span>
+            <input class="form-control " type="file" name="{{ form.cover.name }}" value="{{ form.cover.value|default_if_none:"" }}">
+            </div><br />
+
+            <CENTER><button type="submit" class="btn btn-default btn-lg"><i class="fa fa-building fa-fw"></i> Create Venue</button></CENTER>
+        </div>
+        <div class="col-md-6">
+            <!-- MAP -->
+            {{ form.location.errors }}
+            <label for="{{ form.location.id_for_label }}">Choose a location:</label>
+            <div id="mapCanvas"></div>
+
+            <table class="table table-striped">
+            <tr><td><i class="fa fa-map-marker fa-fw"></i> <div id="address">Location</div></td></tr>
+            </table>
+
+            <input class="form-control" id="lat_form" type="hidden" name="{{ form.latitude.name }}" placeholder="Latitude" size="25"><br />
+            <input class="form-control" id="long_form" type="hidden" name="{{ form.longitude.name }}" placeholder="Longitude" size="25"><br />
+            <input class="form-control" id="address_form" type="hidden" name="{{ form.location.name }}" placeholder="Address" value="{{ form.location.value|default_if_none:"" }}">
+        </div>
+
+    </div>
+    </form>
+</div>
+{% endblock %}

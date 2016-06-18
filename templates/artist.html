@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}{{ artist.name }}{% endblock %}
+
+{% block head %}
+       <link rel="stylesheet" href="{% static 'css/page.css' %}">
+{% endblock %}
+
+<!--Body -->
+{% block content %}
+<div class="container">
+
+<!--Cover Picture -->
+<div class="row">
+    <div class="col-md-12">
+        <div style="overflow:hidden;width:100%;max-height:320px;">
+            {% if artist.cover == "" or artist.cover == Null %}
+            <div style="height: 300px; background-color: #EEEEEE;"></div>
+            {% else %}
+            <img class="center-block" width="100%" src="{{ artist.cover.large.url }}">
+            {% endif %}
+        </div>
+    <div style="position:absolute;left:6%;bottom:10%;">
+        {% if artist.logo %}
+        <img class="img-rounded" height="120px" width="120px" src="{{ artist.logo.thumbnail.url }}">
+        {% else %}
+        <img class="img-rounded" height="120px" width="120px" src="{% static 'images/default.jpg' %}">
+        {% endif %}
+    </div>
+    {% if user.is_authenticated %}
+    <div style="position:absolute;right:6%;top:10%;zindex:99;">
+        {% if artist in user.profile.artist_following.all %}
+        <a href="{% url 'artist_unfollow' artist.name %}"><button class="btn btn-default btn-md active pull-right" ><i class="fa fa-minus"></i> Unfollow</button></a>
+        {% else %}
+        <a href="{% url 'artist_follow' artist.name %}"><button class="btn btn-default btn-md pull-right" ><i class="fa fa-plus"></i> Follow</button></a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    </div>
+</div>
+
+<!-- Artist Main Container-->
+<div class="row">
+    <div class="col-md-12">
+
+    <!-- Artist Details -->
+    <div class="col-md-8 col-md-push-4">
+        <h1>{{ artist.name|upper }}</h1>
+        <hr>
+        <CENTER>
+        {% if artist.genre %}<h4>    <i class="fa fa-music fa"></i>  {{ artist.genre }}</h4>{% endif %}
+        </CENTER>
+        </br>
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Soundcloud -->
+                {% if artist.embed_sc %}
+                    <div class="content-panel bg-gray">
+                         <iframe width="100%" height="450" scrolling="no" frameborder="no" src={{ artist.embed_sc }}></iframe>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+         <div class="row">
+            <div class="col-md-6">
+                <!-- Bio -->
+                <div class="content-panel bg-gray">
+                    <h4>Background</h4>
+                     <p>{{ artist.bio|linebreaksbr }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <!-- Social Media -->
+                <div class="content-panel bg-gray">
+                    <h4>Social Media</h4>
+                    {% if artist.fb_link %}
+                        <a href="{{ artist.fb_link }}" target="_blank" class="btn btn-social-icon btn-facebook">
+                        <i class="fa fa-facebook fa-2x"></i>
+                        </a>
+                    {% endif %}
+                    {% if artist.yt_link %}
+                        <a href="{{ artist.yt_link }}" target="_blank" class="btn btn-social-icon btn-soundcloud">
+                        <i class="fa fa-youtube fa-2x"></i>
+                        </a>
+                    {% endif %}
+                    {% if artist.sc_link %}
+                        <a href="{{ artist.sc_link }}" target="_blank" class="btn btn-social-icon btn-soundcloud">
+                        <i class="fa fa-soundcloud fa-2x"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- SIDE PANEL -->
+    <div class="col-md-4 col-md-pull-8">
+        <div class="listing-panel">
+            <CENTER><h4>Events {{ artist.name }} is performing at:</h4></CENTER>
+            <!-- Events in list form -->
+            {% for event in events %}
+                <a href="/event/{{ event.id }}" style="margin-top: 15px; text-decoration: none;">
+                <div class="listing-box">
+                    <img style="margin-top: 10px;" width="100%" src="{{ event.cover.banner.url }}">
+                    <div class="listing-box-detail">
+                        <CENTER><h3 style="color: #3399ff; margin-top: 12px;">{{ event.name|truncatechars:58 }}</h3></CENTER>
+                        <b style="color: #111111;">{{ event.start_time.time }} on {{ event.start_time|date:"d-M-Y" }}</b> | <img class="img-circle" src="{{ event.venue.logo.thumbnail.url }}" width="18" height="18"> <b><a href="{% url 'venue' event.venue.id %}">{{ event.venue.name }}</a></b>
+                        <br/>
+                        {{ event.description|truncatewords:20 }}<br/>
+                    </div>
+                </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+ </div>
+</div>
+
+</div>
+{% endblock %}

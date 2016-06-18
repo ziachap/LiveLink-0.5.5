@@ -1,0 +1,148 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+ lang="en-GB" xml:lang="en-GB">
+   <!-- This HTML is based on the bootstrap carousel marketing example template -->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>LiveLink</title>
+
+    <!-- Bootstrap & FontAwesome CSS -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" >
+
+    <script src="{% static 'jquery/jquery-2.1.4.min.js' %}"></script>
+
+    <script>
+        window.onresize = function (){
+            document.getElementById("cover").style.height = $(window).height()+"px";
+            document.getElementById("cover").style.width = $(window).width()+"px";
+        }
+        window.onload = function resizeCover(){
+            document.getElementById("cover").style.height = $(window).height()+"px";
+            document.getElementById("cover").style.width = $(window).width()+"px";
+        }
+        function scrollDown() {
+            $('html, body').animate({
+                scrollTop: $("#marketing-begin").offset().top-15
+            }, 700);
+        }
+    </script>
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/intro.css' %}" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <!-- Cover -->
+    <div id="cover">
+
+        <img src="{% static 'images/crowd2.jpg' %}">
+
+        <div id="center-container">
+            <a href="{% url 'map' %}"><h1>LiveLink</h1>
+            ENTER</a>
+        </div>
+
+        <div onclick="scrollDown();" id="down-arrow">
+            Find out more <i class="fa fa-chevron-circle-down fa-fw"></i>
+        </div>
+
+    </div>
+
+    <!-- Marketing messaging and featurettes
+    ================================================== -->
+    <!-- Wrap the rest of the page in another container to center all the content. -->
+
+    <div id="marketing-begin" class="container marketing">
+      <!-- START THE FEATURETTES -->
+      <div class="row featurette">
+        <div class="col-md-7">
+          <h2 class="featurette-heading">Find events in your area <span class="text-muted">with a goddamn map!</span></h2>
+          <p class="lead">Finding events has never been easier. Use our map to find events suited to you, near or far, next year or today. All event information in one place!
+              <a href="{% url 'map' %}">See for yourself..</a></p>
+        </div>
+        <div class="col-md-5">
+          <img class="featurette-image img-responsive center-block" src="{% static 'images/screenshots/map.JPG' %}" alt="MAP">
+        </div>
+      </div>
+
+      <hr class="featurette-divider">
+
+      <!-- Three columns of text below the carousel -->
+      <div class="row">
+        {% for event in events|slice:"3" %}
+        <div class="col-lg-4">
+          <img class="img-circle" src="
+          {% if event.cover %}
+            {{ event.cover.thumbnail.url }}
+          {% else %}
+            {% static 'images/default.jpg' %}
+          {% endif %}"
+            alt="Generic placeholder image" width="140" height="140">
+          <h2>{{ event.name|truncatechars:48 }}</h2>
+          <p>{{ event.description|truncatechars:256 }}</p>
+          <p><a class="btn btn-default" href="{% url 'event' event.id %}" target="_blank" role="button">View details &raquo;</a></p>
+        </div><!-- /.col-lg-4 -->
+        {% endfor %}
+      </div><!-- /.row -->
+
+       <hr class="featurette-divider">
+
+      <div class="row featurette">
+        <div class="col-md-7 col-md-push-5">
+          <h2 class="featurette-heading">Stay in the know <span class="text-muted">Follow your favourite venues.</span></h2>
+          <p class="lead">Follow your favourite artists, venues and events, to remain in the know. Following these will give you a direct feed into whats coming up in the following weeks.
+              <a href="{% url 'map' %}">Start browsing..</a></p>
+        </div>
+        <div class="col-md-5 col-md-pull-7">
+          <img class="featurette-image img-responsive center-block" src="{% static 'images/screenshots/venue.JPG' %}" alt="Generic placeholder image">
+        </div>
+      </div>
+        <hr><br />
+      <div class="row featurette">
+        <div class="col-md-7 col-md-push-5">
+
+          <a href="{% url 'map' %}"><button class="btn btn-default btn-lg" >Get Started!</button></a>
+        </div>
+      </div>
+      <br />
+      <hr>
+
+
+      <!-- /END THE FEATURETTES -->
+
+
+      <!-- FOOTER -->
+      <footer>
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>&copy; 2016 LiveLink, Inc. &middot;
+      </footer>
+
+    </div><!-- /.container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+  </body>
+</html>

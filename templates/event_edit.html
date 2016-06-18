@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}| {{ event.name }}{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/page.css' %}">
+{% endblock %}
+
+<!--Body -->
+{% block content %}
+<div class="container">
+    <form id="profile_edit_form" method="post" action="/editevent/{{ event.id }}/" enctype="multipart/form-data">
+        {% csrf_token %}
+    <!--Cover Picture -->
+    <div class="row">
+        <div class="col-md-12">
+            <div style="overflow:hidden;width:100%;max-height:320px;">
+                    {% if event.cover %}
+                    <img class="center-block" width="100%" src="{{ event.cover.large.url }}">
+                    {% else %}
+                    <img class="center-block" width="100%" src="{% static 'images/default_event.jpg' %}">
+                    {% endif %}
+            </div>
+            <div style="position:absolute;right:6%;top:10%;zindex:99;">
+               <a href="{% url 'event_edit' event.id %}"><button type="submit" class="btn btn-default btn-md pull-right" ><i class="fa fa-save"></i> Save Changes</button></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Main Container-->
+    <div class="row">
+        <!-- Event Details -->
+        <div class="col-md-12">
+            <CENTER>
+            <div class="col-md-4 col-md-offset-4">
+                <br /><input class="form-control" type="text" size ="32" name="{{ form.name.name }}" placeholder="Name" value="{{ form.name.value|default_if_none:""|upper }}"></h2>
+                <br />{{ form.type }}
+            </div>
+            <br /><br /><br /><br /><br />
+            <hr style="background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0))">
+
+                <h4><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+                Start: {{ form.start_time }}
+                | End: {{ form.end_time }}
+                | {{ form.venue }}
+           </h4> </CENTER>
+
+            <div class="row">
+
+                <!-- Artists & Reviews-->
+
+                <div class="col-md-3">
+                    {% if artists %}
+                    <div class="row">
+                    <div class="col-mid-12">
+                        <!-- Performing Artists -->
+                        <div class="content-panel bg-gray">
+                        <h4>Performing Artists</h4>
+                            <!-- Events in list form -->
+                            {% for artist in artists %}
+                                <div class="listing-box">
+                                <a href="{% url 'artist' artist.name %}" style="margin-top: 15px; text-decoration: none; color: #333;">
+                                    <h3>{% if artist.logo  %}<img class="img-circle" src="{{ artist.logo.thumbnail.url }}" width="30" height="30"> {% endif %}
+                                        {{ artist.name }}</h3>
+                                    {{ artist.bio|truncatewords:16 }} <br/>
+                                </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    </div>
+                    {% endif %}
+                    {% comment %}
+                    <!--  Reviews -->
+                    <div class="row">
+                        <div class="col-mid-12">
+                            <div class="content-panel bg-gray">
+                            <h4>Reviews</h4>
+                            </div>
+                        </div>
+                    </div>
+                    {% endcomment %}
+                </div>
+
+
+                 <!-- Details -->
+                <div class="col-md-6">
+                    <div class="content-panel bg-gray">
+                        <h4>Details</h4>
+                        <p><textarea class="form-control input-md" type="textarea" rows="18" name="{{ form.description.name }}" placeholder="Tell us about the event...">{{ form.description.value|default_if_none:"" }}</textarea></p>
+                    </div>
+                </div>
+
+                <!-- SIDE PANEL - Distributor Details -->
+                <div class="col-md-3">
+                    {% if distributors %}
+                    <h4>Get Tickets:</h4>
+                    <div class="">
+                        <!-- Distributor links in list form -->
+                        {% for dist in distributors %}
+                            <a href="{{ dist.link }}" target="_blank">
+                                <div class="listing-box">
+                                    <br/><b>{{ dist.distributor.name }}</b> - £{{ dist.price }}<br/><br/>
+                                    {% if dist.distributor.logo %}<img class="img-rounded" src="{{ dist.distributor.logo.url }}" width="60"> <br/>{% endif %}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                    <!-- SOCIAL LINKS -->
+                    <a href="{{ event.fb_link }}" target="_blank" class="btn btn-social-icon btn-facebook">
+                        <i class="fa fa-facebook fa-2x"></i>
+                    </a>
+                    {% else %}
+                    <br /><h3>Tickets currently unavailable</h3>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+</div>
+{% endblock %}>

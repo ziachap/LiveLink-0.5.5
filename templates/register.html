@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}Register{% endblock %}
+
+{% block head %}
+    <script src="{% static 'jquery/jquery-2.1.4.min.js' %}" xmlns="http://www.w3.org/1999/html"
+            xmlns="http://www.w3.org/1999/html"></script>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+{% endblock %}
+
+<!--Body -->
+{% block content %}
+<div class="container">
+
+    <div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-4">
+                <h2>Create an account</h2>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+        <form id="form" method="post" action="/register/" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <p>Registering with us, will enable you to follow all your preferred events and artists.</p>
+        </br>
+        {% if form.username.errors %}<div class="row">{{ form.username.errors }}</div>{% endif %}
+        <div class="row"> <!-- Username & Password -->
+            <div class="col-xs-4 col-md-4">
+                <div class="input-group margin-bottom-sm">
+                <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                <input class="form-control input-md" type="text" name="{{ form.username.name }}" placeholder="Username" value="{{ form.username.value|default_if_none:"" }}" size="25">
+                </div>
+            </div>
+        </div></br>
+        {% if form.password.errors %}<div class="row">{{ form.password.errors }}</div>{% endif %}
+        <div class="row">
+            <div class="col-xs-4 col-md-4">
+                <div class="input-group margin-bottom-sm">
+                <span class="input-group-addon"><i class="fa fa-lock fa-fw"></i></span>
+                <input class="form-control input-md" type="password" name="{{ form.password.name }}" placeholder="Password" size="25">
+                </div>
+            </div>
+        </div><br />
+         <div class="row">
+            <div class="col-xs-4 col-md-4">
+                <div class="input-group margin-bottom-sm">
+                <span class="input-group-addon"><i class="fa fa-lock fa-fw"></i></span>
+                <input class="form-control input-md" type="password" name="confirm_password" placeholder="Confirm Password" size="25">
+                </div>
+            </div>
+        </div><br />
+        {{ form.first_name.errors }}{{ form.last_name.errors }}
+        <div class="row">   <!-- Full Name -->
+            <div class="col-xs-5 col-md-3">
+                <div class="input-group margin-bottom-sm">
+                <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                <input class="form-control input-md" type="text" name="{{ form.first_name.name }}" value="{{ form.first_name.value|default_if_none:"" }}" placeholder="First Name" size="25">
+                </div>
+            </div>
+            <div class="col-xs-5 col-md-3">
+                <div class="input-group margin-bottom-sm">
+                <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                <input class="form-control input-md" type="text" name="{{ form.last_name.name }}" value="{{ form.last_name.value|default_if_none:"" }}" placeholder="Surname" size="25">
+                </div>
+            </div>
+        </div><br />
+        {{ form.email.errors }}
+        <div class="row">   <!-- Email -->
+            <div class="col-xs-5 col-md-5">
+                <div class="input-group margin-bottom-sm">
+                <span class="input-group-addon"><i class="fa fa-at fa-fw"></i></span>
+                <input class="form-control input-md" type="text" name="{{ form.email.name }}" value="{{ form.email.value|default_if_none:"" }}"placeholder="Email" size="25">
+                </div>
+            </div>
+        </div><br />
+
+         <div class="row">
+            <div class="col-xs-5 col-md-5">
+                <div class="input-group margin-bottom-sm">
+                    <div class="checkbox">
+                    <label><input type="checkbox" name="tncs" value="">I agree with the terms and conditions</label>
+                    </div>
+                </div>
+            </div>
+        </div></br>
+
+        <div class="row">
+            <div class="col-md-push-6">
+                <div class="input-group margin-bottom-sm">
+                  <input type="submit" class="btn btn-default" name="submit" value="Register" />
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+    </div>
+</div>
+
+</div>
+
+{% endblock %}

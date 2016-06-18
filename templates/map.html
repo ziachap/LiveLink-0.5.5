@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}| Home{% endblock %}
+
+{% block head %}
+    <script src="{% static 'jquery/jquery-2.1.4.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static 'css/map.css' %}">
+
+    <!-- Temporary styles - to be moved into CSS file -->
+    <style type="text/css">
+        .info_content {
+            width: 290px;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .info_icons {
+            margin-top: -15px;
+            margin-bottom: 4px;
+            margin-left: -10px;
+        }
+    </style>
+
+
+    <!-- Google Maps API -->
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFMn4IZfdJTexYRh6MfL6fqNbukCIwj9I&libraries=places"></script>
+    <!-- OMS - overlapping markers -->
+    <script src="{% static 'oms/oms.min.js' %}"></script>
+    <script type="text/javascript">
+        // Prepare JS variables using django variables
+        // This allows the JavaScript files to use our Django variables (must be in index.html)
+        var redMarker = '{% static 'images/marker1_small.png' %}';
+        var blueMarker = '{% static 'images/marker1_small_blue.png' %}';
+        var greenMarker = '{% static 'images/marker1_small_green.png' %}';
+        // Master Data - READ ONLY - do not write to this const var
+        var masterData = [
+            {% for event in events %}
+                ['{{ event.name|escape }}',
+                    {{ event.venue.latitude }},
+                    {{ event.venue.longitude }},
+                    {{ event.id }},
+                    '<div class="info_content">' +
+                    '<div class="row"><div class="col-md-11"><h3>{{ event.name|truncatechars:58 }}</h3></div></div>' +
+                    '<div class="row">' +
+                        '<div class="col-md-4 col-sm-4">' +
+                            {% if event.cover %}
+                                '<img class="img-rounded custom-img-rounded" src="{{ event.cover.thumbnail.url }}" width="75" height="75">' +
+                            {% else %}
+                                '<img class="img-rounded custom-img-rounded" src="{{ event.venue.logo.thumbnail.url }}" width="75" height="75">' +
+                            {% endif %}
+                        '</div>' +
+                        '<div class="col-md-6 info_icons col-sm-6">' +
+                            '<h3><small>' +
+                                '<p><img class="img-circle" src="{{ event.venue.logo.thumbnail.url }}" width="18" height="18"> <a href="{% url 'venue' event.venue.id %}">{{ event.venue.name }}</a></p> ' +
+                                '<p><i class="fa fa-music fa-fw"></i> {{ event.type }}</p>' +
+                                '<p><i class="fa fa-gbp fa-fw"></i>N/A</p>' +
+                            '</small></h3>' +
+                        '</div>' +
+                    '</div>' +
+                    '<p>{{ event.description|truncatewords:20 }}</p>' +
+                    '<CENTER><a href="/event/{{ event.id }}"><button class="btn btn-default btn-sm"><i class="fa fa-search fa-fw"></i> More Info</button></a></CENTER>' +
+                    '</div>',
+                    '{{ event.type }}',
+                    {   // 6
+                        url: '{{ event.cover.thumbnail.url }}', // url
+                        scaledSize: new google.maps.Size(32, 32), // scaled size
+                        origin: new google.maps.Point(0,0), // origin
+                        anchor: new google.maps.Point(16,16) // anchor
+                    },
+                    {% if event.type == "Club Night" %}
+                    blueMarker,
+                    {% elif event.type == "Festival" %}
+                    redMarker,
+                    {% else%}
+                    greenMarker,
+                    {% endif %}
+                '{{ event.venue.name|escape }}' // 8
+                ],
+            {% endfor %}
+        ];
+        // do whatever the hell you want with this though:
+        var markerData;
+    </script>
+    <!-- Our custom google maps script -->
+    <script src="{% static 'js/map.js' %}"></script>
+    <!-- Our listing panel script -->
+    <script src="{% static 'js/listing-overlay.js' %}"></script>
+    <script src="{% static 'js/map-list-linker.js' %}"></script>
+    <script src="{% static 'js/map-filter.js' %}"></script>
+    <script src="{% static 'js/map-filter-GUI.js' %}"></script>
+
+{% endblock %}
+
+<!--Body -->
+{% block pre-content %}
+<div class="starter-template">
+<div class="row">
+
+    <!-- MAP -->
+    <input id="pac-input" class="controls" type="text" placeholder="Where do you want to go?">
+    <div class="col-md-12">
+
+        <!-- GOOGLE MAP API --><div id="map-canvas-full" class="map_holder_inner"></div>
+    </div>
+
+    <div id="listing-overlay">
+            <!-- Events in list form -->
+            {% if events %}
+                {% for event in events %}
+                    <div onclick="highlightListing({{ event.id }});openInfoWindow({{ event.id }})" id="listing-{{ event.id }}" class="listing-box">
+                        {% if event.cover %}<img style="margin-top: 10px;" width="100%" src="{{ event.cover.banner.url }}">
+                        {% else %} <img style="margin-top: 10px;" width="100%" src="{% static 'images/default_event.jpg' %}">
+                        {% endif %}
+                        <div class="listing-box-detail">
+                            <CENTER><h3 style="color: #3399ff; margin-top: 12px;">{{ event.name|truncatechars:58 }}</h3></CENTER>
+                            <b>{{ event.start_time.time }} on {{ event.start_time|date:"d-M-Y" }}</b> | {% if event.venue.logo %}<img class="img-circle" src="{{ event.venue.logo.thumbnail.url }}" width="18" height="18">{% endif %} <b><a href="{% url 'venue' event.venue.id %}">{{ event.venue.name }}</a></b>
+                            <br/>
+                            {{ event.description|truncatewords:20 }}<br/>
+                            <CENTER><a href="/event/{{ event.id }}" style="margin-top: 15px;">More info..</a></CENTER>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}No events!{% endif %}
+    </div>
+
+    <div id="filter-overlay">
+        <div>
+            <h1>Filters</h1>
+            <input type="checkbox" class="big-checkbox" id="clubNight" onclick="readTypeFilters()" checked />
+            <img src="{% static 'images/marker1_small_blue.png' %} " style="margin-top: -6px" height="32"/> Club Night<br/>
+            <input type="checkbox" class="big-checkbox" id="liveMusic" onclick="readTypeFilters()" checked />
+            <img src="{% static 'images/marker1_small_green.png' %} " style="margin-top: -6px" height="32"/> Live Music<br/>
+            <input type="checkbox" class="big-checkbox" id="festival" onclick="readTypeFilters()" checked />
+            <img src="{% static 'images/marker1_small.png' %} " style="margin-top: -6px" height="32"/> Festival<br/>
+        </div>
+    </div>
+
+    <div id="listing-overlay-open" class="overlay-button" onclick="toggle_listing_panel()">
+        <i class="fa fa-navicon fa-2x fa-fw"></i>
+    </div>
+
+    <div id="filter-overlay-open" class="overlay-button" onclick="toggle_filter_panel()">
+        <i class="fa fa-cog fa-2x fa-fw"></i>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}{{ user.name }}{% endblock %}
+
+{% block head %}
+<script>
+    $(function() {
+        $( tooltip ).tooltip();
+    });
+</script>
+{% endblock %}
+
+<!--Body -->
+{% block content %}
+<div class="container">
+    <br />
+    <div class="row">
+        {% if r_user == user %}
+            <div class="col-md-12" >
+                <a href="{% url 'profile_edit' %}"><button class="btn btn-default btn-md pull-right" ><i class="fa fa-pencil"></i> Edit Profile</button></a>
+            </div>
+        {% endif %}
+        <!-- Profile -->
+        <div class="col-md-3">
+            <CENTER><img src="{{ r_user.profile.profile_pic.thumbnail.url }}" class="img-rounded" width="90%"><br /></CENTER>
+            <hr>
+            <h1>
+                {{ r_user.username }}
+                <br /><small>{{ r_user.first_name }} {{ r_user.last_name }}</small>
+
+            </h1>
+            <br />{{ r_user.profile.bio|linebreaksbr|truncatechars:500 }}
+        </div>
+        <!-- Profile -->
+        <div class="col-md-9">
+
+            <h1>{{ r_user.username }} is following:</h1>
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Artists</h3>
+                    {% for artist in r_user.profile.artist_following.all %}
+                        <a href="{% url 'artist' artist.name %}">
+                            {% if artist.logo %}
+                            <img src="{{ artist.logo.thumbnail.url }}" width="50px" title="{{ artist.name }}" id="tooltip">
+                            {% else %}
+                            <img src="{% static 'images/default.jpg' %}" width="50px" title="{{ artist.name }}" id="tooltip">
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                    <hr>
+                </div>
+                <div class="col-md-6">
+                    <h3>Venues</h3>
+                    {% for venue in r_user.profile.venue_following.all %}
+                        <a href="{% url 'venue' venue.id %}" >
+                            {% if venue.logo %}
+                            <img src="{{ venue.logo.thumbnail.url }}" width="50px" title="{{ venue.name }}" id="tooltip">
+                            {% else %}
+                            <img src="{% static 'images/default.jpg' %}" width="50px" title="{{ venue.name }}" id="tooltip">
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                    <hr>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

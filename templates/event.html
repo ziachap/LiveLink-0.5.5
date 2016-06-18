@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}| {{ event.name }}{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/page.css' %}">
+{% endblock %}
+
+<!--Body -->
+{% block content %}
+<div class="container">
+
+    <!--Cover Picture -->
+    <div class="row">
+        <div class="col-md-12">
+            <div style="overflow:hidden;width:100%;max-height:320px;">
+                    {% if event.cover %}
+                    <img class="center-block" width="100%" src="{{ event.cover.large.url }}">
+                    {% else %}
+                    <img class="center-block" width="100%" src="{% static 'images/default_event.jpg' %}">
+                    {% endif %}
+            </div>
+            {% if user == event.author %}
+                <div style="position:absolute;right:6%;top:10%;zindex:99;">
+                    <a href="{% url 'event_edit' event.id %}"><button class="btn btn-default btn-md pull-right" ><i class="fa fa-pencil"></i> Edit Event</button></a>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Event Main Container-->
+    <div class="row">
+        <!-- Event Details -->
+        <div class="col-md-12">
+            <h2>{% if event.type == "Club Night" %}
+                <img src="{% static 'images/svgs/turntable.svg' %} " style="margin-top: -6px" height="36"/>
+            {% elif event.type == "Live Music" %}
+                <img src="{% static 'images/svgs/guitar.svg' %} " style="margin-top: -6px" height="36"/>
+            {% elif event.type == "Festival" %}
+                <img src="{% static 'images/svgs/tent.svg' %} " style="margin-top: -6px" height="36"/>
+            {% endif %}
+            {{ event.name|upper }}</h2>
+            {% if event.type == "Festival" %}
+                <hr style="background-image: linear-gradient(to right, rgba(255, 0, 0, 0), rgba(255, 0, 0, 0.75), rgba(255, 0, 0, 0))">
+            {% elif event.type == "Live Music" %}
+                <hr style="background-image: linear-gradient(to right, rgba(0, 255, 0, 0), rgba(0, 255, 0, 0.75), rgba(0, 255, 0, 0))">
+            {% elif event.type == "Club Night" %}
+                <hr style="background-image: linear-gradient(to right, rgba(20, 80, 250, 0), rgba(20, 80, 250, 0.75), rgba(20, 80, 250, 0))">
+            {% else %}
+                <hr style="background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0))">
+            {% endif %}
+
+            <p>
+                <CENTER><h4><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+                Start: {{ event.start_time|date:"d-M-Y" }}
+                {% if event.end_time %}
+                | End: {{ event.end_time|date:"d-M-Y" }}
+                {% endif %}
+                | <img class="img-circle" src="{{ event.venue.logo.thumbnail.url }}" width="18" height="18"> <a href="{% url 'venue' event.venue.id %}">{{ event.venue.name }}</a>
+           </h4> </CENTER></p>
+
+            <div class="row">
+
+                <!-- Artists & Reviews-->
+
+                <div class="col-md-3">
+                    {% if artists %}
+                    <div class="row">
+                    <div class="col-mid-12">
+                        <!-- Performing Artists -->
+                        <div class="content-panel bg-gray">
+                        <h4>Performing Artists</h4>
+                            <!-- Events in list form -->
+                            {% for artist in artists %}
+                                <div class="listing-box">
+                                <a href="{% url 'artist' artist.name %}" style="margin-top: 15px; text-decoration: none; color: #333;">
+                                    <h3>{% if artist.logo  %}<img class="img-circle" src="{{ artist.logo.thumbnail.url }}" width="30" height="30"> {% endif %}
+                                        {{ artist.name }}</h3>
+                                    {{ artist.bio|truncatewords:16 }} <br/>
+                                </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    </div>
+                    {% endif %}
+                    {% comment %}
+                    <!--  Reviews -->
+                    <div class="row">
+                        <div class="col-mid-12">
+                            <div class="content-panel bg-gray">
+                            <h4>Reviews</h4>
+                            </div>
+                        </div>
+                    </div>
+                    {% endcomment %}
+                </div>
+
+
+                 <!-- Details -->
+                <div class="col-md-6">
+                    <div class="content-panel bg-gray">
+                        <h4>Details</h4>
+                        <p>{{ event.description|linebreaksbr }}</p>
+                    </div>
+                </div>
+
+                <!-- SIDE PANEL - Distributor Details -->
+                <div class="col-md-3">
+                    {% if distributors %}
+                    <h4>Get Tickets:</h4>
+                    <div class="">
+                        <!-- Distributor links in list form -->
+                        {% for dist in distributors %}
+                            <a href="{{ dist.link }}" target="_blank">
+                                <div class="listing-box">
+                                    <br/><b>{{ dist.distributor.name }}</b> - £{{ dist.price }}<br/><br/>
+                                    {% if dist.distributor.logo %}<img class="img-rounded" src="{{ dist.distributor.logo.url }}" width="60"> <br/>{% endif %}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                    <!-- SOCIAL LINKS -->
+                    <a href="{{ event.fb_link }}" target="_blank" class="btn btn-social-icon btn-facebook">
+                        <i class="fa fa-facebook fa-2x"></i>
+                    </a>
+                    {% else %}
+                    <br /><h3>Tickets currently unavailable</h3>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}>

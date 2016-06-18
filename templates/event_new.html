@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}| New Event{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+<!--Body -->
+{% block content %}
+<div class="container">
+    <br />
+    <form id="event_new_form" method="post" action="/newevent/" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+        <!-- New Venue -->
+        <div class="col-md-6">
+            {{ form.non_field_errors }}
+            {{ form.name.errors }}
+            <label for="{{ form.name.id_for_label }}">Name:</label>
+            <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon"><i class="fa fa-music fa-fw"></i></span>
+            <input class="form-control" type="text" name="{{ form.name.name }}" placeholder="Name" value="{{ form.name.value|default_if_none:"" }}">
+            </div><br />
+            {{ form.venue.errors }}
+            <label for="{{ form.venue.id_for_label }}">Venue:</label>
+            <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon"><i class="fa fa-building fa-fw"></i></span>
+            {{ form.venue }}
+
+            </div>Venue not here? <a target="_blank" href="{% url 'venue_new' %}">Create a new venue..</a><br /><br />
+            {{ form.type.errors }}
+            <label for="{{ form.type.id_for_label }}">Type:</label>
+            <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon"><i class="fa fa-headphones fa-fw"></i></span>
+            <select class="form-control" id="id_type" name="{{ form.type.name }}">
+                <option value="" selected="{{ form.type.value|default_if_none:"selected" }}">Choose a Type...</option>
+                <option value="Club Night">Club Night</option>
+                <option value="Live Music">Live Music</option>
+                <option value="Festival">Festival</option>
+            </select>
+            </div><br />
+            {{ form.description.errors }}
+            <label for="{{ form.description.id_for_label }}">Description:</label>
+            <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon"><i class="fa fa-align-left fa-fw"></i></span>
+            <textarea class="form-control" type="textarea" rows="10" name="{{ form.description.name }}" placeholder="Description">{{ form.description.value|default_if_none:"" }}</textarea>
+            </div><br />
+            <CENTER><button type="submit" class="btn btn-default btn-lg"><i class="fa fa-music fa-fw"></i> Create Event</button></CENTER>
+        </div>
+
+        <div class="col-md-6">
+            <label for="{{ form.start_time.id_for_label }}">Start:</label>
+            <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon"><i class="fa fa-clock-o fa-fw"></i></span>
+            {{ form.start_time }}
+            </div><br />
+
+            <label for="{{ form.start_time.id_for_label }}">End:</label>
+            <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon"><i class="fa fa-clock-o fa-fw"></i></span>
+            {{ form.end_time }}
+            </div><br />
+
+            {{ form.fb_link.errors }}
+            <label for="{{ form.fb_link.id_for_label }}">Facebook Event:</label>
+            <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon"><i class="fa fa-facebook fa-fw"></i></span>
+            <input class="form-control" type="text" name="{{ form.fb_link.name }}" placeholder="Facebook Event" value="{{ form.fb_link.value|default_if_none:"" }}">
+            </div><br />
+            {{ form.cover.errors }}
+            <label for="{{ form.cover.id_for_label }}">Venue Cover Photo:</label>
+            <div class="input-group margin-bottom-sm">
+            <span class="input-group-addon"><i class="fa fa-file-image-o fa-fw"></i></span>
+            <input class="form-control " type="file" name="{{ form.cover.name }}" value="{{ form.cover.value|default_if_none:"" }}">
+            </div><br />
+        </div>
+
+    </div>
+    </form>
+</div>
+{% endblock %}
